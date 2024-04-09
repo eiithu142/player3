@@ -1,291 +1,123 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Money Betting</title>
+<title>Login</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="login-container">
+  <h2>Login</h2>
+  <form id="login-form">
+    <label for="username">Username:</label>
+    <input type="text" id="username" placeholder="username" required>
 
-<div class="container">
-    
-  <h2>player 1</h2><div id="number-display">14</div>
-  <div id="ampm-display"></div>
-  <div id="saved-number-container">
-    <div id="saved-number">Number: </div>
-    <div id="saved-time">Time: </div>
-  </div>
-  <table id="grid" class="grid-container">
-    <!-- Table will be dynamically created here -->
-  <table>
-  <div class="money-info">
-    <h2>Money:</h2>
-    <p id="money">$</p>
-    <button id="reloadMoneyBtn" hidden></button>
-  </div>
+    <input type="password" id="password" placeholder="password" required>
+    <button type="submit">Login</button>
+  </form>
 </div>
-
-<div class="saved-bets">
-  <h2></h2>
-  <ul id="savedBets"></ul>
-</div>
-
-
-<script >
- // Function to update the saved bets list
- function updateSavedBets() {
-    var savedBetsList = document.getElementById('savedBets');
-    savedBetsList.innerHTML = ''; // Clear the existing list
-    
-    savedBets.forEach(function(bet, index) {
-      var listItem = document.createElement('li');
-      listItem.textContent = 'Number: ' + bet.number + ', Amount: ' + bet.amount;
-      var deleteButton = document.createElement('button');
-      deleteButton.textContent = '';
-      deleteButton.addEventListener('click', function() {
-        savedBets.splice(index, 1); // Remove the bet from the saved bets array
-        updateSavedBets();
-      });
-      listItem.appendChild(deleteButton);
-      savedBetsList.appendChild(listItem);
-    });
-    
-  }
-
-
-
-
-
-
-
-
- document.addEventListener("DOMContentLoaded", function() {
-  var numberDisplay = document.getElementById("number-display");
-  var ampmDisplay = document.getElementById("ampm-display");
-  var savedNumber = document.getElementById("saved-number");
-  var savedTime = document.getElementById("saved-time");
+<script>
   
-  var stopTimes = [{hour: 12, minute: 25}, {hour: 12, minute: 27}];
-  var interval; // Variable to store the interval ID
 
-  // Function to update the displayed number every minute
-  function updateNumber() {
-    var currentTime = new Date();
-    var currentHour = currentTime.getHours();
-    var currentMinutes = currentTime.getMinutes();
+    // script.js
+document.addEventListener("DOMContentLoaded", function() {
+  const loginForm = document.getElementById('login-form');
+  const usernameInput = document.getElementById('username');
+  
+  // Check if username is already stored in local storage
+  const savedUsername = localStorage.getItem('username');
+  if (savedUsername) {
+    // If username is found, redirect to profile page
     
-    // Check if the current time matches any of the stop times
-    for (var i = 0; i < stopTimes.length; i++) {
-      if (currentHour === stopTimes[i].hour && currentMinutes === stopTimes[i].minute) {
-        clearInterval(interval); // Stop updating numbers
-        saveNumber(); // Automatically save the stopped number
-        restartNumber(); // Restart the number after it's stopped
-        return;
-      } 
-    }
+  }
+   // Check if userid is already stored in local storage
+   const savedUserid = localStorage.getItem('userid');
+  if (savedUserid) {
+    // If username is found, redirect to profile page
+    
+  }
+ 
 
-    // Generate a random number between 0 and 99
-    var randomNumber = Math.floor(Math.random() * 100);
-    // Format the number with leading zeros
-    var formattedNumber = randomNumber.toString().padStart(2, "0");
-    // Update the displayed number
-    numberDisplay.textContent = formattedNumber;
 
-    // Update AM/PM display
-    if (currentHour >= 12) {
-      ampmDisplay.textContent = "PM";
+  loginForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const username = usernameInput.value.trim();
+    if (username !== '') {
+      // Store username in local storage
+      localStorage.setItem('username', username);
+      // Redirect to profile page
+      window.location.href = 'clone2.html';
     } else {
-      ampmDisplay.textContent = "AM";
+      alert('Please enter a username.');
     }
-  }
-
-  // Function to save the current number and time
-  function saveNumber() {
-    var currentNumber = numberDisplay.textContent;
-    var currentTime = new Date();
-    var savedTimeString = "Time: " + currentTime.toLocaleTimeString();
-    savedNumber.textContent = "Today Number: " + currentNumber; // Display the saved number
-    savedTime.textContent = savedTimeString; // Display the saved time
-  }
-
-  // Function to restart the number after it's stopped
-  function restartNumber() {
-    interval = setInterval(updateNumber, 1000); // Update number every minute
-  }
-
-  // Start the live number update
-  interval = setInterval(updateNumber, 2000); // Update number every minute
+  });
 });
 
-
-
-
-
-
-function createTable() {
-      var grid = document.getElementById('grid');
-    
-      for (var i = 0; i < 10; i++) {
-        for (var j = 0; j < 10; j++) {
-          var cell = document.createElement('div');
-          var number = (i * 10 + j).toString().padStart(2, '0'); // Convert number to string and pad with leading zero if necessary
-          cell.textContent = number;
-          cell.classList.add('cell');
-          cell.addEventListener('click', function() {
-            // Place bet only if bet amount is valid and user has enough money
-            var betAmount = parseInt(prompt('Enter your bet amount for number ' + this.textContent));
-            if (!isNaN(betAmount) && betAmount > 0 && betAmount <= userMoney) {
-              var currentTime = new Date();
-              var bet = {
-                number: this.textContent,
-                amount: betAmount,
-                time: currentTime.toLocaleTimeString(),
-                day: currentTime.toLocaleDateString()
-              };
-              savedBets.push(bet); // Add the bet to the saved bets array
-              updateSavedBets();
-              userMoney -= betAmount; // Deduct bet amount from user's money
-              document.getElementById('money').textContent = userMoney; // Update displayed money
-              localStorage.setItem('userMoney', userMoney); // Save updated money to local storage
-            } else {
-              alert('Please enter a valid bet amount within your available money.');
-            }
-          });
-          grid.appendChild(cell);
-        }
-      }
-    }
-    
-    // Function to update the saved bets list
-    function updateSavedBets() {
-      var savedBetsList = document.getElementById('savedBets');
-      savedBetsList.innerHTML = ''; // Clear the existing list
-      
-      savedBets.forEach(function(bet) {
-        var listItem = document.createElement('li');
-        listItem.textContent = 'Number: ' + bet.number + ', Amount: ' + bet.amount + ', Time: ' + bet.time + ', Day: ' + bet.day;
-        savedBetsList.appendChild(listItem);
-        
-      });
-    }
-    
-    // Function to reload original money
-    document.getElementById('reloadMoneyBtn').addEventListener('click', function() {
-      userMoney = originalMoney;
-      document.getElementById('money').textContent = userMoney;
-      localStorage.setItem('userMoney', userMoney);
-    });
-    
-    // Variable to store the user's money
-    var originalMoney = parseInt(localStorage.getItem('userMoney')) ||1000;
-
-    var userMoney = originalMoney;
-    
-    // Call the function to create the table
-    createTable();
-    
-    // Variable to store the saved bets
-    var savedBets = [];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-  </script>
+</script>
 </body>
 <style>
+    /* styles.css */
 body {
-    font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+#userid{
+  background-color: #0056b3;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
   padding: 20px;
-}
-
-h2{
-    margin-right: 70%;
-}
-.container {
-    width: 350px;
-  text-align: center;
-}
-
-.grid-container {
-    font-family: sans-serif;
-    border: 1px solid black;
-    width: 100%;
-  border-collapse: collapse;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 15px;
-  background-color: rgb(154, 154, 154);
-}
-#money{
-   
-    font-size: 20px;
-    margin-top: -10%;
-    margin-right: 30%;
-}
-#grid td:hover {
-  background-color: #f0f0f0;
-}
-
-.money-info {
-  text-align: center;
-  margin-top: 20px;
-}
-#grid td {
-  width: 50px;
-  height: 50px;
   border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+h2 {
   text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+input[type="id"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid blue;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.money-info h2 {
-  margin-bottom: 10px;
+button:hover {
+  background-color: #0056b3;
 }
-
-.saved-bets {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.saved-bets h2 {
-  margin-bottom: 10px;
-}
-#number-display{
-    font-size: 30px;
-    width: 40px;
-    background-color: aqua;
-}
-#ampm-display{
-    width: 40px;
-    background-color: aquamarine;
-}
-#saved-number{
-    margin-top: -20px;
-    padding-bottom: 20px;
-    font-size: 25px;
-}
-#saved-time{
-    font-size: 25px;
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 </style>
 </html>
